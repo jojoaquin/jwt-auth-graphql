@@ -89,11 +89,13 @@ export const prisma = new PrismaClient();
           httpOnly: true,
           secure: true,
           sameSite: "strict",
+          maxAge: 24 * 60 * 60 * 1000,
         });
         ctx.res.cookie("refresh-token", refreshToken, {
           httpOnly: true,
           secure: true,
           sameSite: "strict",
+          maxAge: 7 * 24 * 60 * 60 * 1000,
         });
 
         return true;
