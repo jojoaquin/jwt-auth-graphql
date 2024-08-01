@@ -1,4 +1,4 @@
-import express, { Response } from "express";
+import express, { NextFunction, Request, Response } from "express";
 import dotenv from "dotenv";
 import { ApolloServer } from "@apollo/server";
 import { expressMiddleware } from "@apollo/server/express4";
@@ -15,6 +15,16 @@ import { JwtPayload, verify } from "jsonwebtoken";
 
 dotenv.config();
 export const prisma = new PrismaClient();
+
+const graphqlAuth = (req: Request, res: Response, next: NextFunction) => {
+  if (req.header("x-auth-token") !== process.env.AUTH_TOKEN_KEY) {
+    return res.status(401).json({
+      message: "Unauthorized",
+    });
+  } else {
+    return next();
+  }
+};
 
 (async () => {
   const app = express();
@@ -162,6 +172,7 @@ export const prisma = new PrismaClient();
 
   app.use(
     "/graphql",
+    graphqlAuth,
     cors(),
     cookieParser(),
     express.json(),
